@@ -31,6 +31,8 @@ import mozrepl
 NEGATIVE_INFINITY = -float('inf')
 logging.basicConfig(level=logging.DEBUG)
 
+__version__ = '0.1.0'
+
 def resource_path(*args):
     return os.path.join(os.path.dirname(__file__), *args)
 
@@ -86,7 +88,10 @@ def modification_time(filename):
         return NEGATIVE_INFINITY
     return os.stat(filename).st_mtime
 
-def main(args):
+def main(args=None):
+    if args is None:
+        args = sys.argv
+
     # TODO: Use argparse
     if len(args) != len(('paperpal', 'PaperPal', 'bibliography.bib')):
         sys.stderr.write('Usage:   %(name)s collection filename.bib\n'
@@ -99,4 +104,4 @@ def main(args):
         output_file.write(Zotero().export_bibliography(collection))
 
 if __name__ == '__main__':
-    exit(main(sys.argv))
+    exit(main())
