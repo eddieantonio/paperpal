@@ -90,4 +90,5 @@ def fix_filename(item):
         original = original[len('file://'):]
     filename = urllib.unquote(original)
     item.update(pdf_filename=filename)
+
     return item
