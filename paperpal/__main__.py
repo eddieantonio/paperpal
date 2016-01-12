@@ -15,11 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Tool for paper management with Zotero.
-"""
+import sys
+import argparse
 
-__version__ = '0.1.0'
-__all__ = ['Zotero', 'ZoteroError']
+from .zotero import Zotero
 
-from .zotero import Zotero, ZoteroError
+
+def main(args=None):
+    if args is None:
+        args = sys.argv
+
+    # TODO: Use argparse
+    if len(args) != len(('paperpal', 'PaperPal', 'bibliography.bib')):
+        sys.stderr.write('Usage:   %(name)s collection filename.bib\n'
+                         % {'name': sys.argv[0]})
+        exit(-1)
+
+    _, collection, filename = sys.argv
+
+    with open(filename, 'w') as output_file:
+        output_file.write(Zotero().export_bibliography(collection))
+
+if __name__ == '__main__':
+    exit(main())

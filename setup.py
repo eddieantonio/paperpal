@@ -12,7 +12,7 @@ setup(name='paperpal',
       long_description=slurp('README.rst'),
       url='http://github.com/eddieantonio/paperpal',
       entry_points = {
-          'console_scripts': ['paperpal=paperpal.__init__:main'],
+          'console_scripts': ['paperpal=paperpal.__main__:main'],
       },
       author='Eddie Antonio Santos',
       author_email='easantos@ualberta.ca',

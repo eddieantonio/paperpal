@@ -15,11 +15,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Tool for paper management with Zotero.
-"""
+import os
 
-__version__ = '0.1.0'
-__all__ = ['Zotero', 'ZoteroError']
+NEGATIVE_INFINITY = -float('inf')
 
-from .zotero import Zotero, ZoteroError
+
+def modification_time(filename):
+    """
+    Returns modification time of the given filename.
+    Returns negative infinity if the file does not exist.
+    """
+    if not os.path.exists(filename):
+        return NEGATIVE_INFINITY
+    return os.stat(filename).st_mtime
