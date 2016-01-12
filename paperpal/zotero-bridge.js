@@ -64,7 +64,7 @@
 
             translator.translate();
 
-            return ['ok', options.filename];
+            return ['ok', JSON.stringify(options.filename)];
         }),
 
         /**
@@ -73,9 +73,9 @@
          * [{
          *      title: _,
          *      authors: _,
-         *      year: _,
-         *      citeKey: _,
-         *      pdfFilename: _
+         *      date: _,
+         *      cite_key: _,
+         *      pdf_filename: _
          *  }]
          *
          * Option parameters:
@@ -83,13 +83,28 @@
          *  collection: name of the collection to list
          */
         list: withNamedCollection(function (collection) {
-            return ['error', 'not_implemented'];
+            var items = collection.getChildItems();
+
+            var results = items
+                .filter(function (item) {
+                    return item.isRegularItem();
+                })
+                .map(function (item) {
+                    return {
+                        authors: simplifyCreators(item.getCreators()),
+                        title: item.getDisplayTitle(),
+                        cite_key: getCitationKey(item),
+                        pdf_filename: getPdfFilename(item)
+                    };
+                });
+
+            return ['ok', JSON.stringify(results)];
         })
     };
 
     /* Find the action and execute it. */
     if (!actions[actionName]) {
-        return ['error', ['unknown_action', actionName]];
+        return ['error', JSON.stringify(['unknown_action', actionName])];
     }
     return actions[actionName]();
 
@@ -112,6 +127,38 @@
         file.initWithPath(filename);
 
         return file;
+    }
+
+    function simplifyCreators(creators) {
+        return creators.map(function (proxy) {
+            var creator = proxy.ref;
+            return {
+                first: creator.firstName,
+                last: creator.lastName
+            };
+        });
+    }
+
+    function getPdfFilename(item) {
+        var attachmentIds = item.getAttachments();
+        var attachments = Zotero.Items.get(attachmentIds);
+        var paths = attachments
+            .filter(function (attachment) {
+                return attachment.getAttachmentMIMEType() == 'application/pdf';
+            })
+            .map(function (attachment) {
+                return attachment.getLocalFileURL();
+            });
+
+        return paths.length > 0 ? paths[0] : null;
+    }
+
+    function getCitationKey(item) {
+        var string = item.getField('extra');
+        if (string) {
+            return string.split('bibtex: ')[1];
+        }
+        return null;
     }
 
     function withNamedCollection(callback) {
