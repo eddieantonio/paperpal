@@ -28,6 +28,14 @@ from .resource_path import resource_path
 with open(resource_path('zotero-bridge.js')) as javascript_file:
     JS_RUNTIME = javascript_file.read()
 
+NAME_TO_TRANSLATOR_ID = {
+    'bibtex':           '9cb70025-a888-4a29-a210-93ec52da40d4',
+    'biblatex':         'b6e39b57-8942-4d11-8259-342c46ce395f',
+    'better-bibtex':    'f895aa0d-f28e-47fe-b247-2ea77c6ed583',
+    'better-biblatex':  'f895aa0d-f28e-47fe-b247-2ea77c6ed583'
+
+}
+
 
 class ZoteroError(Exception):
     def __init__(self, reason):
@@ -43,11 +51,15 @@ class Zotero(object):
         result = self._send_to_repl('list', collection=collection)
         return [fix_filename(item) for item in result]
 
-    def export_bibliography(self, collection):
+    def export_bibliography(self, collection, translator=None):
+        if translator is not None:
+            translator = NAME_TO_TRANSLATOR_ID[translator]
+
         with tempfile.NamedTemporaryFile() as temporary:
             self._send_to_repl('exportBibliography',
                                filename=temporary.name,
-                               collection=collection)
+                               collection=collection,
+                               translator=translator)
             # Return the contents.
             temporary.seek(0)
             return temporary.read()

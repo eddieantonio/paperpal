@@ -92,9 +92,10 @@ ebook_parser.add_argument('args',
                                'unchanged')
 
 
-def export_bibliography(collection, destination):
+def export_bibliography(collection, destination, *args, **kwargs):
     with open(destination, 'w') as output_file:
-        output_file.write(Zotero().export_bibliography(collection))
+        output_file.write(Zotero().export_bibliography(collection,
+                                                       *args, **kwargs))
 
 
 def copy_pdfs(collection, directory):
@@ -170,11 +171,14 @@ def main():
     options = parser.parse_args()
 
     if options.command == 'export':
-        return export_bibliography(options.collection, options.destination)
+        return export_bibliography(options.collection,
+                                   options.destination,
+                                   translator=options.translator)
     elif options.command == 'copy':
         return copy_pdfs(options.collection, options.directory)
     elif options.command == 'to-ebook':
-        return to_ebook(options.collection, options.directory, *options.args)
+        return to_ebook(options.collection, options.directory,
+                        *options.args)
 
 if __name__ == '__main__':
     exit(main())

@@ -39,9 +39,6 @@
 (function (actionName, options) {
     var BIBTEX_ID = '9cb70025-a888-4a29-a210-93ec52da40d4';
 
-    var bibtextId = '9cb70025-a888-4a29-a210-93ec52da40d4';
-    var betterBibTexId = 'f895aa0d-f28e-47fe-b247-2ea77c6ed583';
-
     var Zotero = Components.classes['@zotero.org/Zotero;1']
         .getService(Components.interfaces.nsISupports)
         .wrappedJSObject;
@@ -58,7 +55,7 @@
          */
         exportBibliography: withNamedCollection(function (collection) {
             var translator = new Zotero.Translate.Export();
-            translator.setTranslator(options.translator || betterBibTexId);
+            translator.setTranslator(options.translator || BIBTEX_ID);
             translator.setLocation(openFile(options.filename));
             translator.setCollection(collection);
 
