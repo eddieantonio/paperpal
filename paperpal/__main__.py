@@ -15,15 +15,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import os
 import argparse
+import os
 import shutil
+import sys
 
+from . import __version__ as version
 from .k2pdfopt_wrapper import k2pdfopt
 from .modification_time import modification_time
 from .zotero import Zotero
-from . import __version__ as version
+
 
 parser = argparse.ArgumentParser(description="utilties for a streamlined "
                                              "literature workflow")

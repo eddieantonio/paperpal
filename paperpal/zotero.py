@@ -24,8 +24,6 @@ import mozrepl
 
 from .resource_path import resource_path
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 with open(resource_path('zotero-bridge.js')) as javascript_file:
     JS_RUNTIME = javascript_file.read()
@@ -63,10 +61,7 @@ class Zotero(object):
             'close_comment': '*/'
         }
 
-        logger.debug(code)
         result = self.repl.execute(code)
-        logger.debug(result)
-
         status, json_payload = tuple(result)
         payload = json.loads(json_payload)
 
