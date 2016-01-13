@@ -1,14 +1,16 @@
+from setuptools import setup, find_packages
+
 from paperpal import __version__ as version
+
 
 def slurp(filename):
     with open(filename) as opened_file:
         return opened_file.read()
 
-from setuptools import setup
 
 setup(name='paperpal',
       version=version,
-      description='Helper to export Zotero data',
+      description='Paper management with Zotero',
       long_description=slurp('README.rst'),
       url='http://github.com/eddieantonio/paperpal',
       entry_points = {
@@ -19,6 +21,7 @@ setup(name='paperpal',
       install_requires=slurp('./requirements.txt').split('\n')[:-1],
       license='Apache 2.0',
       packages=['paperpal'],
+      package_data={'paperpal': ['*.js']},
       classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Apache Software License',
