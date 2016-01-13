@@ -20,8 +20,9 @@ setup(name='paperpal',
       license='Apache 2.0',
       packages=['paperpal'],
       classifiers=[
-        'Development Status :: 3 - Beta',
-        'License :: OSI Approved :: Apache License',
+        'Development Status :: 4 - Beta',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2.7',
+        'Topic :: Text Processing :: Indexing',
       ]
 )

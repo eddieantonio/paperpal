@@ -23,10 +23,76 @@ import shutil
 from .k2pdfopt_wrapper import k2pdfopt
 from .modification_time import modification_time
 from .zotero import Zotero
+from . import __version__ as version
+
+parser = argparse.ArgumentParser(description="utilties for a streamlined "
+                                             "literature workflow")
+parser.add_argument('-v', '--version',
+                    action='version',
+                    version='%(prog)s ' + version)
+subparsers = parser.add_subparsers(title='subcommands',
+                                   description='valid subcommands',
+                                   dest='command',
+                                   help='')
+
+# export options.
+export_parser = subparsers.add_parser('export',
+                                      help='exports a collection as a BibTeX '
+                                           'bibliography')
+export_parser.add_argument('collection',
+                           help='name of the collection to export')
+export_parser.add_argument('destination',
+                           nargs='?',
+                           default='bibliography.bib',
+                           help='name of exported file '
+                                '(default "bibliography.bib")')
+export_parser.set_defaults(translator='bibtex')
+
+translator_group = export_parser.add_mutually_exclusive_group()
+translator_group.add_argument('--bibtex',
+                              action='store_const', const='bibtex',
+                              dest='translator',
+                              help='use BibTeX as the translator '
+                                   '(default)')
+translator_group.add_argument('--biblatex',
+                              action='store_const', const='biblatex',
+                              dest='translator',
+                              help='use BibLaTeX as the translator')
+translator_group.add_argument('--better-bibtex',
+                              action='store_const', const='better-bibtex',
+                              dest='translator',
+                              help='use Better BibTeX as the translator')
+translator_group.add_argument('--better-biblatex',
+                              action='store_const', const='better-biblatex',
+                              dest='translator',
+                              help='use Better BibLaTeX as the translator')
+
+# copy options.
+copy_parser = subparsers.add_parser('copy',
+                                    help='copies PDFs from the collection '
+                                         'to a directory')
+copy_parser.add_argument('collection',
+                         help='name of the collection')
+copy_parser.add_argument('directory',
+                         help='destination of copied PDFs')
+
+# to-ebook options.
+ebook_parser = subparsers.add_parser('to-ebook',
+                                     help='copies PDFs from the collection '
+                                          'to a directory')
+ebook_parser.add_argument('collection',
+                          help='name of the collection')
+ebook_parser.add_argument('directory',
+                          help='destination of translated PDFs')
+ebook_parser.add_argument('args',
+                          metavar='...',
+                          nargs=argparse.REMAINDER,
+                          help='remaining arguments are passed to k2pdfopt '
+                               'unchanged')
 
 
-def export_bibliograph(collection, destination):
-    with open(filename, 'w') as output_file:
+def export_bibliography(collection, destination):
+    with open(destination, 'w') as output_file:
         output_file.write(Zotero().export_bibliography(collection))
 
 
@@ -99,19 +165,15 @@ def pdfs_to_update(collection, destination_directory, with_info=False):
                 yield pdf_path, new_pdf
 
 
-def main(args=None):
-    if args is None:
-        args = sys.argv
+def main():
+    options = parser.parse_args()
 
-    # TODO: Use argparse
-    if len(args) != len(('paperpal', 'PaperPal', 'bibliography.bib')):
-        sys.stderr.write('Usage:   %(name)s collection filename.bib\n'
-                         % {'name': sys.argv[0]})
-        exit(-1)
-
-    _, collection, filename = sys.argv
-
-    copy_pdfs(collection, filename)
+    if options.command == 'export':
+        return export_bibliography(options.collection, options.destination)
+    elif options.command == 'copy':
+        return copy_pdfs(options.collection, options.directory)
+    elif options.command == 'to-ebook':
+        return to_ebook(options.collection, options.directory, *options.args)
 
 if __name__ == '__main__':
     exit(main())

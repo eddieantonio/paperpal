@@ -165,7 +165,7 @@
         return function () {
             var collection = getNamedCollection(options.collection);
             if (collection === null) {
-                return ['error', ['unknown_collection', options.collection]];
+                return ['error', JSON.stringify(['unknown_collection', options.collection])];
             }
 
             return callback(collection)

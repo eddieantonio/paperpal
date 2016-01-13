@@ -1,4 +1,4 @@
 include README.rst
 include LICENSE
 include requirements.txt
-include-recursive *.js
+recursive-include paperpal *.js
