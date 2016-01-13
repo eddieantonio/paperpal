@@ -103,13 +103,14 @@ def copy_pdfs(collection, directory):
         shutil.copy(source, destination)
 
 
-def to_ebook(collection, directory):
+def to_ebook(collection, directory, *k2pdfopt_args):
     pdfs = pdfs_to_update(collection, directory, with_info=True)
     for source, destination, info in pdfs:
         k2pdfopt(source,
                  destination,
+                 author=authors_to_string(*info['authors']),
                  title=info['title'],
-                 author=authors_to_string(*info['authors']))
+                 *k2pdfopt_args)
 
 
 def author_to_string(author):

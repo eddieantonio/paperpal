@@ -20,17 +20,21 @@ import subprocess
 __all__ = ['k2pdfopt']
 
 
-def k2pdfopt(filename, destination, author=None, title=None, *args):
+def k2pdfopt(filename, destination, *extra_args, **kwargs):
     args = ['k2pdfopt',
             '-ui-', '-x',
             '-mode', '2col',
             '-dev', 'kpw']
 
-    if author is not None:
-        args += ['-title', title]
-    if title is not None:
-        args += ['-author', author]
+    if 'author' in kwargs:
+        args += ['-author', kwargs['author']]
+    if 'title' in kwargs:
+        args += ['-title', kwargs['title']]
+
+    args += extra_args
 
     args += ['-o', destination, filename]
+
+    print(args)
 
     return subprocess.call(args)
