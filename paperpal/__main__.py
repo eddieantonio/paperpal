@@ -167,6 +167,7 @@ def pdfs_to_update(collection, destination_directory, with_info=False):
             continue
         if pdf_path is None:
             warnings.warn('No PDF found for {cite_key}'.format(**item))
+            continue
 
         new_pdf = destination(cite_key + '.pdf')
         assert os.path.exists(pdf_path)
