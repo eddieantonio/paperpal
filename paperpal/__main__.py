@@ -19,6 +19,7 @@ import argparse
 import os
 import shutil
 import sys
+import warnings
 
 from . import __version__ as version
 from .k2pdfopt_wrapper import k2pdfopt
@@ -153,20 +154,28 @@ def authors_to_string(*authors):
 def pdfs_to_update(collection, destination_directory, with_info=False):
     pdfs = Zotero().list_papers(collection)
 
-    destination = lambda *paths: os.path.join(destination_directory, *paths)
+    def destination(*paths):
+        return os.path.join(destination_directory, *paths)
 
     for item in pdfs:
         cite_key = item['cite_key']
         pdf_path = item['pdf_filename']
-        new_pdf = destination(cite_key + '.pdf')
 
+        if cite_key is None:
+            warnings.warn('Please generate a cite key for '
+                          '{author} "{title}" {year}'.format(**item))
+            continue
+        if pdf_path is None:
+            warnings.warn('No PDF found for {cite_key}'.format(**item))
+
+        new_pdf = destination(cite_key + '.pdf')
         assert os.path.exists(pdf_path)
+
         if modification_time(pdf_path) > modification_time(new_pdf):
             if with_info:
                 yield pdf_path, new_pdf, item
             else:
                 yield pdf_path, new_pdf
-
 
 def main():
     options = parser.parse_args()

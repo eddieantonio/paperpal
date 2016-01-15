@@ -19,7 +19,7 @@
 Tool for paper management with Zotero.
 """
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __all__ = ['Zotero', 'ZoteroError']
 
 from .zotero import Zotero, ZoteroError

@@ -32,9 +32,6 @@ def k2pdfopt(filename, destination, *extra_args, **kwargs):
         args += ['-title', kwargs['title']]
 
     args += extra_args
-
     args += ['-o', destination, filename]
-
-    print(args)
 
     return subprocess.call(args)
