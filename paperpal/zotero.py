@@ -67,7 +67,7 @@ class Zotero(object):
     def _send_to_repl(self, action, **options):
         # INTENTIONALLY inject code into the code snippet.
         code = JS_RUNTIME % {
-            'action': repr(action),
+            'action': json.dumps(action),
             'options': json.dumps(options),
             'open_comment': '/*',
             'close_comment': '*/'

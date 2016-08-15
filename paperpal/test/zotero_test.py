@@ -1,13 +1,19 @@
 #!/usr/bin/env python
 # -*- encoding: UTF-8 -*-
 
+"""
+These fragile, fragile tests only work with my personal Zotero collections :/
+"""
+
 from ..zotero import Zotero, ZoteroError
+
 
 def test_export_bibliography():
     z = Zotero()
     result = z.export_bibliography('PartyCrasher')
 
-    assert '@inproceedings{alipour13' in result
+    assert 'A contextual approach towards more accurate duplicate' in result
+
 
 def test_export_bibliography_better_biblatex():
     z = Zotero()
@@ -15,6 +21,7 @@ def test_export_bibliography_better_biblatex():
                                    translator='better-biblatex')
 
     assert '@inproceedings{alipour2013' in result
+
 
 def test_list_papers():
     z = Zotero()

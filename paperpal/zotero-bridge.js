@@ -16,11 +16,13 @@
 
 /**
  * This is a "runtime" for Python to talk to Zotero. It provides a library of
- * common tasks, and protocol for communicating to Python via JSON. Note that
+ * common tasks and a protocol for communicating to Python via JSON. Note that
  * the following immediately-invoked function expression (IIFE) **MUST** be
  * the last expression in the file!
  *
- * The API is this:
+ * The API has two actions:
+ *  - exportBibliography
+ *  - list
  *
  * Python INTENTIONALLY injects code into this snippet, passing an "action" as
  * a string, and any additional arguments through a JSON called "options".

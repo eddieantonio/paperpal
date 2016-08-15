@@ -100,12 +100,12 @@ def export_bibliography(collection, destination, *args, **kwargs):
 
 
 def copy_pdfs(collection, directory):
-    for source, destination in pdfs_to_update(collection, directory):
+    for source, destination, _ in pdfs_to_update(collection, directory):
         shutil.copy(source, destination)
 
 
 def to_ebook(collection, directory, *k2pdfopt_args):
-    pdfs = pdfs_to_update(collection, directory, with_info=True)
+    pdfs = pdfs_to_update(collection, directory)
     for source, destination, info in pdfs:
         k2pdfopt(source,
                  destination,
@@ -152,6 +152,10 @@ def authors_to_string(*authors):
 
 
 def pdfs_to_update(collection, destination_directory, with_info=False):
+    """
+    Yields a tuple of PDFs that should be updated. The tuple is the original
+    pdf, and the new PDF path. If with_info is requested,
+    """
     pdfs = Zotero().list_papers(collection)
 
     def destination(*paths):
@@ -170,13 +174,14 @@ def pdfs_to_update(collection, destination_directory, with_info=False):
             continue
 
         new_pdf = destination(cite_key + '.pdf')
-        assert os.path.exists(pdf_path)
+        if not os.path.exists(pdf_path):
+            warnings.warn("I can't make sense of this path: "
+                          '{!r}. Skipping...'.format(pdf_path))
+            continue
 
         if modification_time(pdf_path) > modification_time(new_pdf):
-            if with_info:
-                yield pdf_path, new_pdf, item
-            else:
-                yield pdf_path, new_pdf
+            yield pdf_path, new_pdf, item
+
 
 def main():
     options = parser.parse_args()
@@ -190,6 +195,7 @@ def main():
     elif options.command == 'to-ebook':
         return to_ebook(options.collection, options.directory,
                         *options.args)
+
 
 if __name__ == '__main__':
     exit(main())
