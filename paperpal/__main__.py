@@ -20,15 +20,17 @@ import os
 import shutil
 import sys
 import warnings
+import codecs
 
-from . import __version__ as version
-from .k2pdfopt_wrapper import k2pdfopt
-from .modification_time import modification_time
-from .zotero import Zotero
+from paperpal import __version__ as version
+from paperpal.k2pdfopt_wrapper import k2pdfopt
+from paperpal.modification_time import modification_time
+from paperpal.zotero import Zotero
+from paperpal.fix_bibliography import fix_bibliography
 
 
-parser = argparse.ArgumentParser(description="utilties for a streamlined "
-                                             "literature workflow")
+parser = argparse.ArgumentParser(description="utilities for a streamlined "
+                                             "bibliography workflow")
 parser.add_argument('-v', '--version',
                     action='version',
                     version='%(prog)s ' + version)
@@ -91,6 +93,18 @@ ebook_parser.add_argument('args',
                           nargs=argparse.REMAINDER,
                           help='remaining arguments are passed to k2pdfopt '
                                'unchanged')
+
+# copy options.
+fix_parser = subparsers.add_parser('fix-bibliography',
+                                   help='Fixes an existing .bib file for '
+                                   'easier usage with ieeetran.cls and '
+                                   'sig-alternate.cls')
+fix_parser.add_argument('bibliography',
+                        help='name of input file')
+fix_parser.add_argument('destination',
+                        default='bibliography.bib',
+                        help='name of exported file '
+                        '(default "bibliography.bib")')
 
 
 def export_bibliography(collection, destination, *args, **kwargs):
@@ -183,6 +197,14 @@ def pdfs_to_update(collection, destination_directory, with_info=False):
             yield pdf_path, new_pdf, item
 
 
+def fix_bibliography_wrapper(source, destination):
+    with codecs.open(source, encoding="UTF-8") as bibtex_file:
+        result = fix_bibliography(bibtex_file.read())
+
+    with codecs.open(destination, encoding='UTF-8', mode='w') as output_file:
+        output_file.write(result)
+
+
 def main():
     options = parser.parse_args()
 
@@ -195,6 +217,9 @@ def main():
     elif options.command == 'to-ebook':
         return to_ebook(options.collection, options.directory,
                         *options.args)
+    elif options.command == 'fix-bibliography':
+        return fix_bibliography_wrapper(options.bibliography,
+                                        options.destination)
 
 
 if __name__ == '__main__':

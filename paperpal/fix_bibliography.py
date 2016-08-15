@@ -11,10 +11,6 @@ from bibtexparser.customization import homogeneize_latex_encoding
 
 __all__ = ['fix_bibliography']
 
-"""
-with open(filename, 'rt') as bibtex_file:
-    fix_bibliography(bibtex_file.read())
-"""
 
 def fix_bibliography(bibtex_string):
     """
