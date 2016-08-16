@@ -50,8 +50,13 @@ export_parser.add_argument('destination',
                            default='bibliography.bib',
                            help='name of exported file '
                                 '(default "bibliography.bib")')
+export_parser.add_argument('-c', '--clean',
+                           action='store_true',
+                           help='Exports as ASCII, removes URLs, and ensures '
+                           'each entry with a date also has a year field. '
+                           'Same as running `paperpal fix-bibliography` on '
+                           'the output')
 export_parser.set_defaults(translator='bibtex')
-
 translator_group = export_parser.add_mutually_exclusive_group()
 translator_group.add_argument('--bibtex',
                               action='store_const', const='bibtex',
@@ -107,10 +112,16 @@ fix_parser.add_argument('destination',
                         '(default "bibliography.bib")')
 
 
-def export_bibliography(collection, destination, *args, **kwargs):
-    with open(destination, 'w') as output_file:
-        output_file.write(Zotero().export_bibliography(collection,
-                                                       *args, **kwargs))
+def export_bibliography(collection, destination, fix_bib=False,
+                        *args, **kwargs):
+    bib_string = Zotero().export_bibliography(collection, *args, **kwargs)
+                  
+    if fix_bib:
+        bib_string = fix_bibliography(bib_string)
+
+    bib_unicode = bib_string.decode('UTF-8')
+    with codecs.open(destination, encoding='UTF-8', mode='w') as output_file:
+        output_file.write(bib_unicode)
 
 
 def copy_pdfs(collection, directory):
@@ -211,6 +222,7 @@ def main():
     if options.command == 'export':
         return export_bibliography(options.collection,
                                    options.destination,
+                                   fix_bib=options.clean,
                                    translator=options.translator)
     elif options.command == 'copy':
         return copy_pdfs(options.collection, options.directory)

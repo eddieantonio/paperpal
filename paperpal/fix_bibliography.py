@@ -28,7 +28,8 @@ def fix_bibliography(bibtex_string):
     for entry in bibtex.entries:
         fix_entry(entry)
 
-    return bibtexparser.dumps(bibtex)
+    # TODO: if py3k, do not encode.
+    return bibtexparser.dumps(bibtex).encode("UTF-8")
 
 
 def fix_entry(entry):
